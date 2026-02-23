@@ -8,6 +8,7 @@ const feedbackEl = document.getElementById('feedback');
 const scoreEl = document.getElementById('score');
 const totalEl = document.getElementById('total');
 const nextBtn = document.getElementById('nextBtn');
+const resetBtn = document.getElementById('resetBtn');
 const useSampleBtn = document.getElementById('useSampleBtn');
 const defaultDataFile = 'US_States_License_Plate_Nicknames.xlsx';
 
@@ -30,11 +31,14 @@ const sampleData = [
 
 fileInput.addEventListener('change', handleFileUpload);
 nextBtn.addEventListener('click', buildQuestion);
+resetBtn.onclick = (event) => {
+  event.preventDefault();
+  restartGame();
+};
 useSampleBtn.addEventListener('click', () => {
   entries = [...sampleData];
   uploadStatus.textContent = `Loaded ${entries.length} sample rows.`;
-  resetGame();
-  buildQuestion();
+  restartGame();
 });
 loadDefaultDataset();
 
@@ -50,8 +54,7 @@ function handleFileUpload(event) {
       const parsed = parseWorkbookData(e.target?.result);
       entries = parsed;
       uploadStatus.textContent = `Loaded ${entries.length} rows from ${file.name}.`;
-      resetGame();
-      buildQuestion();
+      restartGame();
     } catch (error) {
       uploadStatus.textContent = `Upload failed: ${error.message}`;
     }
@@ -75,8 +78,7 @@ async function loadDefaultDataset() {
     const parsed = parseWorkbookData(buffer);
     entries = parsed;
     uploadStatus.textContent = `Loaded ${entries.length} rows from bundled dataset.`;
-    resetGame();
-    buildQuestion();
+    restartGame();
   } catch (error) {
     uploadStatus.textContent = `Bundled dataset unavailable. Upload a file to start. (${error.message})`;
   }
@@ -128,20 +130,41 @@ function normalizeRows(rows) {
 function resetGame() {
   score = 0;
   total = 0;
+  answered = false;
+  currentQuestion = null;
   updateScore();
   feedbackEl.textContent = '';
+  feedbackEl.style.color = 'var(--muted)';
+  nextBtn.classList.add('hidden');
   quizArea.classList.remove('hidden');
   emptyState.classList.add('hidden');
 }
 
-function buildQuestion() {
+function restartGame() {
+  if (entries.length < 4) return;
+  const previousState = currentQuestion?.correctState ?? null;
+  resetGame();
+  buildQuestion(previousState);
+}
+
+function buildQuestion(excludeState = null) {
   if (entries.length < 4) return;
 
   answered = false;
   feedbackEl.textContent = '';
   nextBtn.classList.add('hidden');
 
-  const correct = entries[Math.floor(Math.random() * entries.length)];
+  const pool =
+    excludeState && entries.some((e) => e.state !== excludeState)
+      ? entries.filter((e) => e.state !== excludeState)
+      : entries;
+  let correct = pool[Math.floor(Math.random() * pool.length)];
+  // Try a few times to avoid showing the same nickname twice in a row.
+  if (currentQuestion && pool.length > 1) {
+    for (let i = 0; i < 8 && correct.nickname === currentQuestion.nickname; i += 1) {
+      correct = pool[Math.floor(Math.random() * pool.length)];
+    }
+  }
   const wrongOptions = shuffleArray(
     entries.filter((e) => e.state !== correct.state).map((e) => e.state)
   ).slice(0, 3);

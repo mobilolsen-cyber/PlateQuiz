@@ -15,19 +15,8 @@
         <p class="subtitle">Which state does this nickname belong to?</p>
       </header>
 
-      <section class="uploader card">
-        <h2>1) Data Source</h2>
-        <p>
-          The app auto-loads the bundled Excel list. Upload a different Excel file if you want to
-          replace it. Your file should contain <code>state</code> and <code>nickname</code> columns
-          (column names are flexible).
-        </p>
-        <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" />
-        <p id="uploadStatus" class="status"></p>
-      </section>
-
       <section class="quiz card">
-        <h2>2) Play</h2>
+        <h2>Play</h2>
         <div id="quizArea" class="hidden">
           <p class="prompt">Which state does this nickname belong to?</p>
           <p id="nicknamePrompt" class="nickname">-</p>
@@ -35,12 +24,15 @@
         </div>
 
         <div id="emptyState">
+          <p id="uploadStatus" class="status"></p>
+          <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" />
           <p>If loading fails, upload your file or use sample data.</p>
           <button id="useSampleBtn" class="secondary">Use Sample Data</button>
         </div>
 
         <div class="footer-actions">
-          <button id="nextBtn" class="secondary hidden">Next Question</button>
+          <button id="resetBtn" type="button" class="secondary">Reset Game</button>
+          <button id="nextBtn" type="button" class="secondary hidden">Next Question</button>
         </div>
         <p id="feedback" class="feedback"></p>
       </section>
