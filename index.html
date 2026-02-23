@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plate Quiz</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <h1>Plate Quiz</h1>
+        <p class="subtitle">Which state does this nickname belong to?</p>
+      </header>
+
+      <section class="uploader card">
+        <h2>1) Data Source</h2>
+        <p>
+          The app auto-loads the bundled Excel list. Upload a different Excel file if you want to
+          replace it. Your file should contain <code>state</code> and <code>nickname</code> columns
+          (column names are flexible).
+        </p>
+        <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" />
+        <p id="uploadStatus" class="status"></p>
+      </section>
+
+      <section class="quiz card">
+        <h2>2) Play</h2>
+        <div id="quizArea" class="hidden">
+          <p class="prompt">Which state does this nickname belong to?</p>
+          <p id="nicknamePrompt" class="nickname">-</p>
+          <div id="options" class="options"></div>
+        </div>
+
+        <div id="emptyState">
+          <p>If loading fails, upload your file or use sample data.</p>
+          <button id="useSampleBtn" class="secondary">Use Sample Data</button>
+        </div>
+
+        <div class="footer-actions">
+          <button id="nextBtn" class="secondary hidden">Next Question</button>
+        </div>
+        <p id="feedback" class="feedback"></p>
+      </section>
+
+      <section class="stats card">
+        <h2>Score</h2>
+        <p><span id="score">0</span> correct / <span id="total">0</span> total</p>
+      </section>
+    </main>
+  </body>
+</html>
